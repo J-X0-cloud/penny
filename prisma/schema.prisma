@@ -1,0 +1,156 @@
+// Penny data model. Money is stored in integer cents.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Household {
+  id        String   @id @default(cuid())
+  name      String
+  splitMode SplitMode @default(EVEN)
+  createdAt DateTime @default(now())
+
+  members  Member[]
+  accounts Account[]
+  goals    Goal[]
+  budgets  Budget[]
+  bills    Bill[]
+}
+
+enum SplitMode {
+  EVEN
+  BY_INCOME
+  CUSTOM
+}
+
+model Member {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name        String
+  email       String    @unique
+  initial     String    @db.VarChar(2)
+
+  accounts     Account[]
+  transactions Transaction[]
+}
+
+enum AccountGroup {
+  CASH
+  INVESTMENTS
+  OTHER_ASSETS
+  LIABILITIES
+}
+
+model Account {
+  id            String       @id @default(cuid())
+  householdId   String
+  household     Household    @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  ownerId       String?
+  owner         Member?      @relation(fields: [ownerId], references: [id])
+  group         AccountGroup
+  name          String
+  institution   String
+  balanceCents  Int
+  shared        Boolean      @default(false)
+  manual        Boolean      @default(false)
+  lastSyncedAt  DateTime?
+
+  transactions Transaction[]
+  snapshots    BalanceSnapshot[]
+
+  @@index([householdId])
+}
+
+model BalanceSnapshot {
+  id           String   @id @default(cuid())
+  accountId    String
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  month        DateTime @db.Date
+  balanceCents Int
+
+  @@unique([accountId, month])
+}
+
+model Category {
+  key   String @id
+  label String
+  icon  String
+  fg    String
+  bg    String
+
+  budgets      Budget[]
+  transactions Transaction[]
+  rules        Rule[]
+}
+
+model Budget {
+  id            String    @id @default(cuid())
+  householdId   String
+  household     Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  categoryKey   String
+  category      Category  @relation(fields: [categoryKey], references: [key])
+  month         DateTime  @db.Date
+  limitCents    Int
+  rolloverCents Int       @default(0)
+
+  @@unique([householdId, categoryKey, month])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  paidById    String?
+  paidBy      Member?  @relation(fields: [paidById], references: [id])
+  categoryKey String
+  category    Category @relation(fields: [categoryKey], references: [key])
+  merchant    String
+  amountCents Int
+  postedAt    DateTime
+  reviewed    Boolean  @default(false)
+  hidden      Boolean  @default(false)
+
+  @@index([accountId, postedAt])
+  @@index([reviewed])
+}
+
+/// Learned or user-created merchant rule, e.g. "Harvest Co-op → Groceries".
+model Rule {
+  id          String   @id @default(cuid())
+  pattern     String
+  rename      String?
+  categoryKey String
+  category    Category @relation(fields: [categoryKey], references: [key])
+  appliedTo   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Bill {
+  id               String    @id @default(cuid())
+  householdId      String
+  household        Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name             String
+  icon             String
+  amountCents      Int
+  previousCents    Int?
+  nextDue          DateTime  @db.Date
+  note             String?
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name        String
+  image       String
+  savedCents  Int
+  targetCents Int
+  targetDate  DateTime? @db.Date
+  autoCents   Int?
+}
