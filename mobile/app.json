@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Penny",
+    "slug": "penny",
+    "scheme": "penny",
+    "version": "2.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "backgroundColor": "#FBFAF8",
+    "ios": {
+      "bundleIdentifier": "com.pennyapp.ios",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Penny uses Face ID to lock your balances every time the app opens."
+      }
+    },
+    "android": {
+      "package": "com.pennyapp.android",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F7F4EF"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
