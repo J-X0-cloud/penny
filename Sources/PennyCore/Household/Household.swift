@@ -85,3 +85,34 @@ public struct Household: Hashable, Sendable, Codable {
         bills.first { $0.id == id }
     }
 }
+
+// MARK: - Edits
+
+extension Household {
+    /// Moves a transaction to another category, marks it reviewed and shifts its amount between the
+    /// two categories' spent totals so the budgets stay in step with the ledger. Returns `nil` when
+    /// no transaction has that id.
+    @discardableResult
+    public mutating func recategorize(transactionID: String, to newCategory: CategoryKey) -> Transaction? {
+        guard let index = transactions.firstIndex(where: { $0.id == transactionID }) else { return nil }
+        let oldCategory = transactions[index].category
+        let amount = transactions[index].amount
+        if oldCategory != newCategory,
+           let from = categories.firstIndex(where: { $0.key == oldCategory }),
+           let to = categories.firstIndex(where: { $0.key == newCategory }) {
+            categories[from].spent -= amount
+            categories[to].spent += amount
+        }
+        transactions[index].category = newCategory
+        if !transactions[index].reviewed {
+            transactions[index].reviewed = true
+            reviewQueueCount = max(reviewQueueCount - 1, 0)
+        }
+        return transactions[index]
+    }
+
+    /// Transactions still waiting for a category check, newest first.
+    public var unreviewedTransactions: [Transaction] {
+        transactions.filter { !$0.reviewed }
+    }
+}

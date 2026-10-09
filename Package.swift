@@ -12,6 +12,10 @@ let package = Package(
         .library(name: "PennyCore", targets: ["PennyCore"]),
         // Server-rendered product site and web dashboard, built from PennyCore.
         .library(name: "PennyWeb", targets: ["PennyWeb"]),
+        // Typed client for the JSON API.
+        .library(name: "PennyClient", targets: ["PennyClient"]),
+        // SwiftUI screens for the iPhone app (compiles to an empty module where SwiftUI is unavailable).
+        .library(name: "PennyUI", targets: ["PennyUI"]),
         // HTTP service: the site, the JSON API and static assets.
         .executable(name: "penny-server", targets: ["PennyServer"]),
     ],
@@ -28,6 +32,14 @@ let package = Package(
         .target(
             name: "PennyWeb",
             dependencies: ["PennyCore"]
+        ),
+        .target(
+            name: "PennyClient",
+            dependencies: ["PennyCore"]
+        ),
+        .target(
+            name: "PennyUI",
+            dependencies: ["PennyCore", "PennyClient"]
         ),
         .target(
             name: "PennyServerKit",
@@ -48,6 +60,7 @@ let package = Package(
         ),
         .testTarget(name: "PennyCoreTests", dependencies: ["PennyCore"]),
         .testTarget(name: "PennyWebTests", dependencies: ["PennyWeb", "PennyCore"]),
+        .testTarget(name: "PennyClientTests", dependencies: ["PennyClient", "PennyCore"]),
         .testTarget(
             name: "PennyServerTests",
             dependencies: [

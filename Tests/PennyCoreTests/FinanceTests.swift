@@ -133,3 +133,35 @@ struct FinanceTests {
         #expect(MonthDay(label: "Foo 3") == nil)
     }
 }
+
+@Suite("Household edits")
+struct HouseholdEditTests {
+    @Test func recategorizeMovesSpendBetweenBudgets() throws {
+        var household = Household.sample
+        let result = household.recategorize(transactionID: "t6", to: .home)
+        let moved = try #require(result)
+        #expect(moved.category == .home)
+        #expect(moved.reviewed)
+        #expect(household.category(.shopping).spent == Money(cents: 14_237 - 2_499))
+        #expect(household.category(.home).spent == Money(cents: 21_410 + 2_499))
+        // The month's total does not change, only where it sits.
+        #expect(household.totalSpent == Household.sample.totalSpent)
+        #expect(household.reviewQueueCount == 3)
+        #expect(!household.unreviewedTransactions.contains { $0.id == "t6" })
+    }
+
+    @Test func confirmingTheSameCategoryOnlyMarksReviewed() {
+        var household = Household.sample
+        household.recategorize(transactionID: "t1", to: .groceries)
+        #expect(household.category(.groceries).spent == 548.2)
+        #expect(household.transactions[0].reviewed)
+        household.recategorize(transactionID: "t1", to: .groceries)
+        #expect(household.reviewQueueCount == 3)
+    }
+
+    @Test func unknownTransactionChangesNothing() {
+        var household = Household.sample
+        #expect(household.recategorize(transactionID: "nope", to: .fun) == nil)
+        #expect(household == Household.sample)
+    }
+}
