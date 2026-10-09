@@ -10,9 +10,16 @@ let package = Package(
     products: [
         // Pure-Swift domain: budgets, bills, net worth, household split and the sample ledger.
         .library(name: "PennyCore", targets: ["PennyCore"]),
+        // Server-rendered product site and web dashboard, built from PennyCore.
+        .library(name: "PennyWeb", targets: ["PennyWeb"]),
     ],
     targets: [
         .target(name: "PennyCore"),
+        .target(
+            name: "PennyWeb",
+            dependencies: ["PennyCore"]
+        ),
         .testTarget(name: "PennyCoreTests", dependencies: ["PennyCore"]),
+        .testTarget(name: "PennyWebTests", dependencies: ["PennyWeb", "PennyCore"]),
     ]
 )
