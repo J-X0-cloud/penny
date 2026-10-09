@@ -1,0 +1,9 @@
+.build
+.swiftpm
+.git
+iOS
+docs
+*.md
+.env
+.env.*
+!.env.example
