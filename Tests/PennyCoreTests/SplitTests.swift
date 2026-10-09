@@ -85,14 +85,20 @@ struct SplitTests {
         #expect(result.balance.remaining == .zero)
     }
 
-    @Test func invalidRequestsReportEveryField() {
-        #expect(throws: ValidationError(fields: [
-            "amount": ["Number must be greater than 0"],
-            "to": ["Choose two different members"],
-        ])) {
+    @Test func nonPositiveAmountsAreRejectedFirst() {
+        #expect(throws: SettlementError.invalidFields(ValidationError(field: "amount", "Number must be greater than 0"))) {
             try SettlementService.settle(
                 SettleUpRequest(from: .maya, to: .maya, amount: 0), against: .square, recordedAt: "now"
             )
         }
+    }
+
+    @Test func payerAndPayeeMustDiffer() {
+        #expect(throws: SettlementError.sameMember) {
+            try SettlementService.settle(
+                SettleUpRequest(from: .jordan, to: .jordan, amount: 5), against: .square, recordedAt: "now"
+            )
+        }
+        #expect(SettlementError.sameMember.message == "Choose two different members")
     }
 }

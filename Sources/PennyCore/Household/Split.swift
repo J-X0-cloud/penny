@@ -137,6 +137,21 @@ public struct SettlementResult: Hashable, Sendable, Codable {
     public let balance: Balance
 }
 
+/// Why a settle-up payment was rejected.
+public enum SettlementError: Error, Hashable, Sendable {
+    /// One or more fields are invalid.
+    case invalidFields(ValidationError)
+    /// The payment names the same member as payer and payee.
+    case sameMember
+
+    public var message: String {
+        switch self {
+        case let .invalidFields(errors): errors.description
+        case .sameMember: "Choose two different members"
+        }
+    }
+}
+
 public enum SettlementService {
     /// Validates a settle-up payment and works out what is left to pay.
     ///
@@ -144,18 +159,17 @@ public enum SettlementService {
     ///   - request: The payment being recorded.
     ///   - balance: The household's current balance.
     ///   - recordedAt: Timestamp to stamp on the settlement.
-    /// - Throws: ``ValidationError`` when the payment is not positive or names the same member twice.
+    /// - Throws: ``SettlementError/invalidFields(_:)`` when the amount is not a positive number of
+    ///   cents, then ``SettlementError/sameMember`` when payer and payee are the same person.
     public static func settle(
         _ request: SettleUpRequest, against balance: SettleUpBalance, recordedAt: String
-    ) throws(ValidationError) -> SettlementResult {
-        var errors = ValidationError()
+    ) throws(SettlementError) -> SettlementResult {
         if request.amount <= .zero {
-            errors.add("amount", "Number must be greater than 0")
+            throw .invalidFields(ValidationError(field: "amount", "Number must be greater than 0"))
         }
         if request.from == request.to {
-            errors.add("to", "Choose two different members")
+            throw .sameMember
         }
-        guard errors.isEmpty else { throw errors }
 
         let outstanding = balance.owed(from: request.from, to: request.to)
         let remaining = max(outstanding - request.amount, .zero)
