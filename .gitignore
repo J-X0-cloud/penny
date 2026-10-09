@@ -1,3 +1,14 @@
+# Swift / SwiftPM
+.build/
+.swiftpm/
+/Packages/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+DerivedData/
+*.xcuserstate
+iOS/*.xcodeproj/
+
 # dependencies
 node_modules/
 .pnpm-store/
@@ -13,6 +24,7 @@ mobile/ios/
 mobile/android/
 
 # env
+.env
 .env*.local
 
 # misc

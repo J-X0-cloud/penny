@@ -1,0 +1,113 @@
+/// The bundled sample household: Maya & Jordan, September. The marketing site, the interactive
+/// preview, development builds of the iPhone app and the in-memory API ledger all read from it.
+extension Household {
+    public static let sample = Household(
+        name: "Maya & Jordan",
+        members: [
+            Member(id: .maya, name: "Maya"),
+            Member(id: .jordan, name: "Jordan"),
+        ],
+        period: BudgetPeriod(today: MonthDay(month: 9, day: 24), weekday: "Wednesday", days: 30),
+        categories: [
+            Category(key: .groceries, label: "Groceries", icon: .cart, foreground: "#1C9B74", tint: "#DDF3EA", spent: 548.2, budget: 650),
+            Category(key: .dining, label: "Dining out", icon: .fork, foreground: "#D4485B", tint: "#FBE3E6", spent: 312.75, budget: 300),
+            Category(key: .home, label: "Home", icon: .home, foreground: "#5B3FD9", tint: "#EEE9FD", spent: 214.1, budget: 300),
+            Category(key: .transport, label: "Transport", icon: .car, foreground: "#2F7FD1", tint: "#E1EEFB", spent: 186.4, budget: 260),
+            Category(key: .shopping, label: "Shopping", icon: .bag, foreground: "#C8743C", tint: "#F7E3D2", spent: 142.37, budget: 250),
+            Category(key: .fun, label: "Fun", icon: .ticket, foreground: "#B8860B", tint: "#FBF0D2", spent: 96.3, budget: 180, rollover: 42.33),
+            Category(key: .pets, label: "Pets", icon: .paw, foreground: "#8E5BC8", tint: "#F1E7FB", spent: 88, budget: 120),
+            Category(key: .health, label: "Health", icon: .heart, foreground: "#E0678A", tint: "#FCE6ED", spent: 64, budget: 120),
+            Category(key: .coffee, label: "Coffee", icon: .cup, foreground: "#7A5A3C", tint: "#F1E8DF", spent: 56.3, budget: 70),
+        ],
+        transactions: [
+            Transaction(id: "t1", merchant: "Harvest Co-op", category: .groceries, amount: 57.81, postedOn: MonthDay(month: 9, day: 24), account: "Joint checking", paidBy: .maya),
+            Transaction(id: "t2", merchant: "Nori House", category: .dining, amount: 42.36, postedOn: MonthDay(month: 9, day: 24), account: "Northstar Visa", paidBy: .jordan),
+            Transaction(id: "t3", merchant: "Bluebird Coffee", category: .coffee, amount: 6.75, postedOn: MonthDay(month: 9, day: 24), account: "Maya’s debit", paidBy: .maya),
+            Transaction(id: "t4", merchant: "Parkline Garage", category: .transport, amount: 18, postedOn: MonthDay(month: 9, day: 23), account: "Northstar Visa", paidBy: .jordan),
+            Transaction(id: "t5", merchant: "Linden Pet Supply", category: .pets, amount: 34.2, postedOn: MonthDay(month: 9, day: 23), account: "Joint checking", paidBy: .maya),
+            Transaction(id: "t6", merchant: "Marigold Books", category: .shopping, amount: 24.99, postedOn: MonthDay(month: 9, day: 22), account: "Maya’s debit", paidBy: .maya),
+            Transaction(id: "t7", merchant: "Juniper Pharmacy", category: .health, amount: 18.4, postedOn: MonthDay(month: 9, day: 22), account: "Northstar Visa", paidBy: .jordan),
+        ],
+        reviewQueueCount: 4,
+        bills: [
+            Bill(id: "rent", name: "Rent", icon: .home, amount: 2150, due: MonthDay(month: 10, day: 1), note: "Maple Court Apts"),
+            Bill(id: "electric", name: "Electric", icon: .bolt, amount: 86.42, due: MonthDay(month: 10, day: 3), note: "Estimated"),
+            Bill(id: "internet", name: "Internet", icon: .wifi, amount: 60, due: MonthDay(month: 10, day: 5), note: "Fiber 500"),
+            Bill(id: "car-insurance", name: "Car insurance", icon: .shield, amount: 142, due: MonthDay(month: 10, day: 8), note: "Monthly"),
+            Bill(id: "phone", name: "Phone plan", icon: .phone, amount: 65, due: MonthDay(month: 10, day: 12), note: "2 lines"),
+            Bill(id: "streaming", name: "Streaming", icon: .play, amount: 17.99, due: MonthDay(month: 10, day: 14), note: "Up $2.00", priceChange: 2),
+            Bill(id: "gym", name: "Gym", icon: .dumbbell, amount: 39, due: MonthDay(month: 10, day: 18), note: "Monthly"),
+            Bill(id: "music", name: "Music", icon: .music, amount: 11.99, due: MonthDay(month: 10, day: 21), note: "Family plan"),
+        ],
+        recurringFound: 11,
+        accounts: [
+            Account(id: "a1", group: .cash, name: "Joint checking", institution: "Harbor Credit Union", balance: 8412.55, updated: "2h ago"),
+            Account(id: "a2", group: .cash, name: "High-yield savings", institution: "Harbor Credit Union", balance: 16448.1, updated: "2h ago"),
+            Account(id: "a3", group: .investments, name: "Brokerage", institution: "Summit Invest", balance: 41870.22, updated: "1h ago"),
+            Account(id: "a4", group: .investments, name: "401(k)", institution: "Keystone Retirement", balance: 58215.4, updated: "6h ago"),
+            Account(id: "a5", group: .investments, name: "Roth IRA", institution: "Summit Invest", balance: 18904.66, updated: "1h ago"),
+            Account(id: "a6", group: .investments, name: "Crypto", institution: "Cold wallet", balance: 2318.09, updated: "12m ago"),
+            Account(id: "a7", group: .otherAssets, name: "2021 hatchback", institution: "Manual estimate", balance: 17500, updated: "Sep 1"),
+            Account(id: "a8", group: .liabilities, name: "Auto loan", institution: "Harbor Credit Union", balance: -11240.18, updated: "2h ago"),
+            Account(id: "a9", group: .liabilities, name: "Visa Signature", institution: "Northstar Card", balance: -1842.37, updated: "3h ago"),
+            Account(id: "a10", group: .liabilities, name: "Student loan", institution: "Federal servicer", balance: -9760, updated: "1d ago"),
+        ],
+        // Month-end net worth, October last year through this September.
+        netWorthMonths: ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+        netWorthHistory: [122976, 124635, 126658, 129920, 131623, 133470, 132987, 133735, 135595, 137857, 140673, 140826],
+        spendThisMonth: [
+            65.02, 136.7, 211.36, 294.28, 365.85, 504.88, 558.89, 615.1, 698.07, 764.55, 845.13, 881.62, 977.51,
+            1052.23, 1112.82, 1175.1, 1205.98, 1248.26, 1294.05, 1432.52, 1556.65, 1595.73, 1670.5, 1708.42,
+        ],
+        spendLastMonth: [
+            60.21, 115.02, 155.72, 240.19, 272.95, 379.36, 526.2, 563.43, 629.13, 698.57, 733.4, 788.56, 915.49,
+            1016.72, 1092.68, 1134.5, 1181.18, 1220.22, 1283.03, 1432.48, 1547.85, 1626.77, 1682.2, 1759.43,
+            1797.91, 1847.79, 1971.73, 2100.93, 2158.66, 2196.3,
+        ],
+        cashflow: [
+            CashflowMonth(month: "Apr", income: 9850, spending: 6420),
+            CashflowMonth(month: "May", income: 9850, spending: 7110),
+            CashflowMonth(month: "Jun", income: 10420, spending: 6880),
+            CashflowMonth(month: "Jul", income: 9850, spending: 7640),
+            CashflowMonth(month: "Aug", income: 9850, spending: 6310),
+            CashflowMonth(month: "Sep", income: 9850, spending: 5980),
+        ],
+        monthlyIncome: 9850,
+        funHistory: [
+            MonthSpend(month: "Apr", spent: 142),
+            MonthSpend(month: "May", spent: 168),
+            MonthSpend(month: "Jun", spent: 121),
+            MonthSpend(month: "Jul", spent: 176),
+            MonthSpend(month: "Aug", spent: 137),
+            MonthSpend(month: "Sep", spent: 96),
+        ],
+        allocation: [
+            AllocationSlice(label: "US stocks", percent: 49, color: "#5B3FD9"),
+            AllocationSlice(label: "International", percent: 18, color: "#8C74F0"),
+            AllocationSlice(label: "Bonds", percent: 13, color: "#C8743C"),
+            AllocationSlice(label: "Cash", percent: 17, color: "#1C9B74"),
+            AllocationSlice(label: "Crypto", percent: 3, color: "#E0B04A"),
+        ],
+        sharedSpend: [.maya: 1352.1, .jordan: 1134.1],
+        goals: [
+            Goal(id: "home", name: "Down payment", image: "goal-home", saved: 38400, target: 80000, note: "Target: spring 2028"),
+            Goal(id: "trip", name: "Yosemite in May", image: "goal-trip", saved: 1150, target: 1800, note: "$130 a month"),
+            Goal(id: "baby", name: "Baby fund", image: "goal-baby", saved: 2600, target: 6000, note: "Auto-saves $200"),
+            Goal(id: "date", name: "Anniversary dinner", image: "goal-date", saved: 180, target: 250, note: "Nov 14"),
+            Goal(id: "party", name: "Sam’s wedding trip", image: "goal-party", saved: 420, target: 900, note: "June"),
+        ],
+        sharedAccounts: [
+            SharedAccount(id: "s1", name: "Joint checking", institution: "Harbor Credit Union", owner: .both, icon: .bank, shared: true),
+            SharedAccount(id: "s2", name: "Visa Signature", institution: "Northstar Card", owner: .both, icon: .bank, shared: true),
+            SharedAccount(id: "s3", name: "Maya’s debit", institution: "Harbor Credit Union", owner: .member(.maya), icon: .bank, shared: false),
+            SharedAccount(id: "s4", name: "Jordan’s 401(k)", institution: "Keystone Retirement", owner: .member(.jordan), icon: .trend, shared: false),
+        ],
+        sharedLedger: [
+            LedgerEntry(id: "l1", label: "Harvest Co-op", paidBy: .maya, amount: 57.81),
+            LedgerEntry(id: "l2", label: "Nori House", paidBy: .jordan, amount: 42.36),
+            LedgerEntry(id: "l3", label: "Electric · September", paidBy: .maya, amount: 86.42),
+            LedgerEntry(id: "l4", label: "Parkline Garage", paidBy: .jordan, amount: 18),
+        ],
+        splitPolicy: .even
+    )
+}
